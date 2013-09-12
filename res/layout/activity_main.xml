@@ -25,6 +25,26 @@
 	</LinearLayout>
 	
 	<LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText 
+            android:id="@+id/uriField"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_your_uri"/>
+        
+        <Button 
+            android:id="@+id/uriButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/uri"
+            android:onClick="onClick2"/>
+        
+	</LinearLayout>
+	
+	<LinearLayout 
 	    android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">

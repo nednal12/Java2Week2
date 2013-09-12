@@ -157,8 +157,10 @@ public class MainActivity extends Activity {
 		
 		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
 		int numberOfObjects = 0;
+		/*
 		@SuppressWarnings("unused")
 		int length = -1;
+		
 		
 		try {
 			FileInputStream fis = openFileInput("JSONData.txt");
@@ -176,6 +178,9 @@ public class MainActivity extends Activity {
 			}	        
 			
 			String JSONString = new String(fileContent);
+			*/
+			String JSONString = FileStuff.readStringFile(_context, "JSONData.txt");
+		
 			JSONArray inputArray = null;
 			try {
 				inputArray = new JSONArray(JSONString);
@@ -219,11 +224,12 @@ public class MainActivity extends Activity {
 					new String[] { "restaurant", "dealTitle", "city"}, new int[] {R.id.restaurant, R.id.dealTitle, R.id.city});
 			
 			listview.setAdapter(adapter);
-			
+		/*
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 }
 
