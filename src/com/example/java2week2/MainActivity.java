@@ -3,6 +3,7 @@ package com.example.java2week2;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -10,12 +11,16 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -36,6 +41,7 @@ public class MainActivity extends Activity {
 	Boolean _connected = false;
 	private EditText editText;
 	Context _context;
+	ArrayList<HashMap<String, String>> myList;
 	
 	// Used to receive messages back from the service.
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -149,13 +155,52 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void onClick2(View view) {
+		EditText field = (EditText) findViewById(R.id.uriField);
+		String tempString = field.getText().toString();
+		Log.i("Click2", tempString);
+		
+		Uri uri = Uri.parse(field.getText().toString());
+		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+		
+
+		
+		if (myList != null)
+		{
+			myList.clear();
+		}
+		
+		if(cursor.moveToFirst() == true)
+		{
+			for(int i = 0; i < cursor.getCount(); i++)
+			{
+				HashMap<String, String> displayMap = new HashMap<String, String>();
+				
+				displayMap.put("restaurant", cursor.getString(1));
+				displayMap.put("dealTitle", cursor.getString(2));
+				displayMap.put("city", cursor.getString(3));
+				
+				cursor.moveToNext();
+				
+				myList.add(displayMap);
+				
+			}
+			
+			SimpleAdapter adapter = new SimpleAdapter(this, myList, R.layout.list_row,
+					new String[] { "restaurant", "dealTitle", "city"}, new int[] {R.id.restaurant, R.id.dealTitle, R.id.city});
+			
+			listview.setAdapter(adapter);
+		}
+		
+	}
 	
 	/**
 	 * Display data.
 	 */
 	public void displayData(){
 		
-		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
+//		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
+		myList = new ArrayList<HashMap<String, String>>();
 		int numberOfObjects = 0;
 		/*
 		@SuppressWarnings("unused")
@@ -231,5 +276,7 @@ public class MainActivity extends Activity {
 		}
 		*/
 	}
+	
+	
 }
 

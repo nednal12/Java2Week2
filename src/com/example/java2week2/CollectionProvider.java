@@ -26,7 +26,7 @@ public class CollectionProvider extends ContentProvider{
 		
 		// Define the table columns
 		public static final String RESTAURANT_COLUMN = "restaurant";
-		public static final String DEAL_COLUMN = "deal";
+		public static final String DEAL_COLUMN = "dealTitle";
 		public static final String CITY_COLUMN = "city";
 		
 		public static final String[] PROJECTION = {"_Id", RESTAURANT_COLUMN, DEAL_COLUMN, CITY_COLUMN};
@@ -97,7 +97,7 @@ public class CollectionProvider extends ContentProvider{
 		}
 		
 		numberOfObjects = inputArray.length();
-		Log.i("numberOfObjects", "The number of objects is: " + numberOfObjects);
+		Log.i("CollectionProvider", "The number of objects is: " + numberOfObjects);
 		
 		switch(uriMatcher.match(uri)) {
 		case ITEMS:
@@ -122,6 +122,61 @@ public class CollectionProvider extends ContentProvider{
 			break;
 			
 		case ITEMS_ID:
+			
+			String itemId = uri.getLastPathSegment();
+			Log.i("queryId", itemId);
+			
+			int index;
+			
+			try {
+				index = Integer.parseInt(itemId);
+			} catch (NumberFormatException e) {
+				
+				e.printStackTrace();
+				Log.e("query", "index format error");
+				break;
+			}
+			
+			if (index <= 0 || index > numberOfObjects){
+				Log.e("query", "index out of range for " + uri.toString());
+				break;
+			}
+			
+			JSONObject jo = null;
+			try {
+				jo = inputArray.getJSONObject(index - 1);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String restaurant = null;
+			try {
+				restaurant = jo.getString("name");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String dealTitle = null;
+			try {
+				dealTitle = jo.getString("dealTitle");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String city = null;
+			try {
+				city = jo.getString("city");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			result.addRow(new Object[] { index, restaurant, dealTitle, city});
+			
+			break;
+			
+			default:
+				Log.e("query", "invalid uri = " + uri.toString());
 			
 		}
 		return result;

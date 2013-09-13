@@ -6,7 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="enter_your_zip_code">Enter Your Zip Code</string>
     <string name="go">Go</string>
-    <string name="enter_your_uri">Enter Your URI</string>
+    <string name="enter_your_uri">content://com.bmarohnic.java2week2.collectionprovider/items</string>
     <string name="uri">URI</string>
 
 </resources>
