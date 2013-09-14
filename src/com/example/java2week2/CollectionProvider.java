@@ -1,3 +1,12 @@
+/*
+ * project		Java2Week2
+ * 
+ * package		com.example.java2week2
+ * 
+ * @author		Brent Marohnic
+ * 
+ * date			Sep 14, 2013
+ */
 package com.example.java2week2;
 
 import org.json.JSONArray;
@@ -37,12 +46,14 @@ public class CollectionProvider extends ContentProvider{
 	
 	public static final int ITEMS = 1;
 	public static final int ITEMS_ID = 2;
+	public static final int ITEMS_RESTAURANT = 3;
 	
 	private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	
 	static {
 		uriMatcher.addURI(AUTHORITY, "items/", ITEMS);
 		uriMatcher.addURI(AUTHORITY, "items/#", ITEMS_ID);
+		uriMatcher.addURI(AUTHORITY, "items/restaurant/*", ITEMS_RESTAURANT);
 	}
 	
 	@Override
@@ -61,7 +72,9 @@ public class CollectionProvider extends ContentProvider{
 			return DealData.CONTENT_TYPE;
 			
 		case ITEMS_ID:
+		case ITEMS_RESTAURANT:
 			return DealData.CONTENT_ITEM_TYPE;
+			
 		}
 		
 		return null;
@@ -85,6 +98,10 @@ public class CollectionProvider extends ContentProvider{
 		// TODO Auto-generated method stub
 		int numberOfObjects = 0;
 		MatrixCursor result = new MatrixCursor(DealData.PROJECTION);
+		String restaurant;
+		String dealTitle;
+		String city;
+		JSONObject jo;
 		
 		String JSONString = FileStuff.readStringFile(getContext(), "JSONData.txt");
 		JSONArray inputArray = null;
@@ -105,10 +122,10 @@ public class CollectionProvider extends ContentProvider{
 			for (int i = 0; i < numberOfObjects; i++)
 			{
 				try {
-					JSONObject jo = inputArray.getJSONObject(i);
-					String restaurant = jo.getString("name");
-					String dealTitle = jo.getString("dealTitle");
-					String city = jo.getString("city");
+					jo = inputArray.getJSONObject(i);
+					restaurant = jo.getString("name");
+					dealTitle = jo.getString("dealTitle");
+					city = jo.getString("city");
 					
 					result.addRow(new Object[] { i + 1, restaurant, dealTitle, city});
 					
@@ -142,28 +159,28 @@ public class CollectionProvider extends ContentProvider{
 				break;
 			}
 			
-			JSONObject jo = null;
+			jo = null;
 			try {
 				jo = inputArray.getJSONObject(index - 1);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String restaurant = null;
+			restaurant = null;
 			try {
 				restaurant = jo.getString("name");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String dealTitle = null;
+			dealTitle = null;
 			try {
 				dealTitle = jo.getString("dealTitle");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String city = null;
+			city = null;
 			try {
 				city = jo.getString("city");
 			} catch (JSONException e) {
@@ -172,6 +189,33 @@ public class CollectionProvider extends ContentProvider{
 			}
 			
 			result.addRow(new Object[] { index, restaurant, dealTitle, city});
+			
+			break;
+			
+		case ITEMS_RESTAURANT:
+			
+			String restName = uri.getLastPathSegment().toString();
+			
+			
+			for (int i = 0; i < numberOfObjects; i++)
+			{
+				try {
+					jo = inputArray.getJSONObject(i);
+					restaurant = jo.getString("name");
+					dealTitle = jo.getString("dealTitle");
+					city = jo.getString("city");
+					
+					if (restaurant.contentEquals(restName))
+					{
+						result.addRow(new Object[] { i + 1, restaurant, dealTitle, city});
+					}
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 			
 			break;
 			

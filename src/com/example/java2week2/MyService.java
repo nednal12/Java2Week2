@@ -1,3 +1,12 @@
+/*
+ * project		Java2Week2
+ * 
+ * package		com.example.java2week2
+ * 
+ * @author		Brent Marohnic
+ * 
+ * date			Sep 14, 2013
+ */
 package com.example.java2week2;
 
 import java.io.File;
