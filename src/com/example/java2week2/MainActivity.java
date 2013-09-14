@@ -1,9 +1,5 @@
 package com.example.java2week2;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -86,13 +81,40 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		_context = this;
-		setContentView(R.layout.activity_main);
-		editText = (EditText) findViewById(R.id.searchField);
-		
-		listview = (ListView) this.findViewById(R.id.list);
-		View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
-		listview.addHeaderView(listHeader);
+		if(savedInstanceState != null)
+		{
+			_context = this;
+			setContentView(R.layout.activity_main);
+			editText = (EditText) findViewById(R.id.searchField);
+			
+			listview = (ListView) this.findViewById(R.id.list);
+			View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
+			listview.addHeaderView(listHeader);
+			
+			if(savedInstanceState.getString("searchValue") != null)
+			{
+				String searchValue = savedInstanceState.getString("searchValue");
+//				EditText field = (EditText) findViewById(R.id.searchField);
+				editText.setText(searchValue);
+			}
+			 
+			if(savedInstanceState.getString("uriValue") != null)
+			{
+				String uriValue = savedInstanceState.getString("uriValue");
+				EditText field2 = (EditText) findViewById(R.id.uriField);
+				field2.setText(uriValue);
+			}
+			
+		} else
+		{
+			_context = this;
+			setContentView(R.layout.activity_main);
+			editText = (EditText) findViewById(R.id.searchField);
+
+			listview = (ListView) this.findViewById(R.id.list);
+			View listHeader = this.getLayoutInflater().inflate(R.layout.list_header, null);
+			listview.addHeaderView(listHeader);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -122,6 +144,21 @@ public class MainActivity extends Activity {
 	    super.onPause();
 	    unregisterReceiver(receiver);
 	  }
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) 
+	{
+		super.onSaveInstanceState(savedInstanceState);
+		
+		Log.i("onSaveInstanceState", "This is being called.");
+		EditText field = (EditText) findViewById(R.id.searchField);
+		savedInstanceState.putString("searchValue", field.getText().toString());
+		EditText field2 = (EditText) findViewById(R.id.uriField);
+		savedInstanceState.putString("uriValue", field2.getText().toString());
+		
+		listview.setAdapter(null);
+		Log.i("onSaveInstanceState", "And so is this.");
+	}
 	    
 	/**
 	 * On click.
@@ -164,11 +201,11 @@ public class MainActivity extends Activity {
 		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 		
 
-		
-		if (myList != null)
-		{
-			myList.clear();
-		}
+		myList = new ArrayList<HashMap<String, String>>();
+//		if (myList != null)
+//		{
+//			myList.clear();
+//		}
 		
 		if(cursor.moveToFirst() == true)
 		{
@@ -199,31 +236,9 @@ public class MainActivity extends Activity {
 	 */
 	public void displayData(){
 		
-//		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
 		myList = new ArrayList<HashMap<String, String>>();
 		int numberOfObjects = 0;
-		/*
-		@SuppressWarnings("unused")
-		int length = -1;
 		
-		
-		try {
-			FileInputStream fis = openFileInput("JSONData.txt");
-			StringBuffer fileContent = new StringBuffer("");
-			byte[] buffer = new byte[1024];
-			
-			try {
-				
-				while ((length = fis.read(buffer)) != -1) {
-				    fileContent.append(new String(buffer));
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	        
-			
-			String JSONString = new String(fileContent);
-			*/
 			String JSONString = FileStuff.readStringFile(_context, "JSONData.txt");
 		
 			JSONArray inputArray = null;
@@ -269,12 +284,7 @@ public class MainActivity extends Activity {
 					new String[] { "restaurant", "dealTitle", "city"}, new int[] {R.id.restaurant, R.id.dealTitle, R.id.city});
 			
 			listview.setAdapter(adapter);
-		/*
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		
 	}
 	
 	
